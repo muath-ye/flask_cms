@@ -5,7 +5,10 @@ from functools import wraps
 from datetime import timedelta
 
 app = Flask(__name__)
-app.config.from_object('config')
+
+# importing config by ethier ways
+app.config.from_object('config') # or
+# app.config.from_pyfile('config.py')
 
 def login_required(function):
     @wraps(function) 
@@ -73,9 +76,9 @@ def login():
 # Logout Route 
 @app.route("/logout") 
 def logout(): 
-	session.pop('logged_in', None)
-    flash(u'سُجّل خروجك بنجاح!')
-	return redirect(url_for('home'))
+    session.pop('logged_in', None)
+    flash(u"سُجّل خروجك بنجاح!")
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
     app.run(debug=true)
