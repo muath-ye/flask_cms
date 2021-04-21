@@ -2,26 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>الصّفحة الرّئيسيّة</title>
+    <title>مُدوّنتي</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
 </head>
 <body style="direction: rtl;">
-    <img src="{{ url_for('static', filename='img/logo.png')}}" />
+    <img src="{{ url_for('static', filename='img/logo.png')}}" class="logo" />
+    <h3>مُدوّنتي</h3>
     {# هذا تعليق لن يظهر للزائر #}
-    <h3>{{ page }}</h3>
-    {% set x = 6 %}
-    {% if x == 10 %}
-        x يُساوي 10
-    {% elif x == 5 %}
-        x يُساوي 5
-    {% else %}
-        x يُساوي شيئا آخر
-    {% endif %}
-    <hr>
+    
+    <div class="main">
     {% for post in posts %}
-        <p> {{ post }} </p>
+        
+        <a href="post/{{ post[0] }}"><h2> {{ post[1] }} </a>
+        <a href="delete/{{ post[0] }}"><span class="delete">حذف</span></a></h2>
+        
+        <p> {{ post[2] }} </p>
     {% endfor %}
-
-    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+   
+    
+    <h4>أضف مقالا</h4>
+    <div class="create_form">
+        <form action="{{ url_for('create') }}" method="POST">
+            <input class="input" type="text" name="title" placeholder="عنوان المقال"/>
+            <textarea name="content"  class="input" rows="10" placeholder="مُحتوى المقال"></textarea>
+            <input type="submit" value="أضف" />
+        </form>
+    </div>    
+    </div>
 </body> 
 </html>
+

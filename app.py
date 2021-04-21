@@ -1,32 +1,35 @@
 # -*- coding:utf8 -*-
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, redirect, url_for
+import manage_db 
+
 app = Flask(__name__)
 
-# Home Page
-@app.route("/")
-def home():
-    return render_template('index.html', page = u"الصّفحة الرّئيسيّة")
+# Home Page 
+@app.route("/") 
+def home(): 
+    posts = manage_db.get_posts() 
+    return render_template('index.html', posts = posts)
 
-# Hello Page
-@app.route("/hello")
-def hello():
-    return render_template('index.html', page = u"صفحة التّرحيب")
+# Create Post Page
+@app.route("/create", methods=['GET', 'POST'])
+def create():
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        manage_db.create(title, content)
+    return redirect(url_for('home'))
 
-# Posts Page
-@app.route("/posts")
-def posts():
-    posts = [ u"مُحتوى المقال الأول", u"مُحتوى المقال الثاني", u"مُحتوى المقال الثالث", u"مُحتوى المقال الرابع" ]
-    return render_template('index.html', posts = posts, page = u"صفحة المقالات")
+# Single Post Page 
+@app.route("/post/<post_id>") 
+def post(post_id): 
+    post = manage_db.get_post_by_id(post_id) 
+    return render_template('post.html', post = post)
 
-@app.route("/say_hello/<name>")
-def say_hello(name):
-    return u"Hello {}".format(name)
-
-@app.route("/first_last")
-def first_last():
-    first_name = request.args.get('first_name').capitalize()
-    last_name = request.args.get('last_name').upper()
-    return u"<h3>First Name: {} <br>Last Name: {}</h3>".format(first_name, last_name)
+# Delete Post 
+@app.route("/delete/<post_id>") 
+def delete(post_id): 
+    manage_db.delete(post_id)
+    return redirect(url_for('home'))
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=1200)
+    app.run(debug=true)
