@@ -1,10 +1,11 @@
 # -*- coding:utf8 -*-
-from flask import Flask, request, render_template, redirect, url_for, session
+from flask import Flask, request, render_template, redirect, url_for, session, flash
 import manage_db
 from functools import wraps
+from datetime import timedelta
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = "\xee\x9dA\x81\x19\x17\xdd\x04\xae9\xc1\x1a-\xf2\xf8\xda\x9a\x99u\x90\x96]\xbaT"
+app.config.from_object('config')
 
 def login_required(function):
     @wraps(function) 
@@ -12,6 +13,7 @@ def login_required(function):
         if 'logged_in' in session:
             return function(*args, **kwargs)
         else:
+            flash(u'سجّل دخولك أولا لإجراء هذه العمليّة')
             return redirect(url_for('home'))
     return wrapper
 
@@ -28,6 +30,7 @@ def create():
         title = request.form['title']
         content = request.form['content']
         manage_db.create(title, content)
+        flash(u'أضيف المقال بنجاح!')
     return redirect(url_for('home'))
 
 # Single Post Page 
@@ -40,6 +43,7 @@ def post(post_id):
 @app.route("/delete/<post_id>") 
 def delete(post_id): 
     manage_db.delete(post_id)
+    flash(u'حُذف المقال بنجاح!')
     return redirect(url_for('home'))
 
 # Login Route
@@ -49,8 +53,19 @@ def login():
         username = request.form['username'] 
         password = request.form['password'] 
 	
-        if username == "admin" and password == "password": 
-            session['logged_in'] = True # create new session with name 'logged_in'
+        if username == app.config['USERNAME'] and password == app.config['PASSWORD']: 
+            # create new session with name 'logged_in'
+            session['logged_in'] = True
+            # to add 'remember me' option
+            session.permanent = True
+            # Make session last for only 30 min, here other options:
+            # timedelta(days=0) # الأيام
+            # timedelta(seconds=0) # الثواني
+            # timedelta(minutes=0) # الدّقائق
+            # timedelta(hours=0) # السّاعات
+            # timedelta(weeks=0) # الأسابيع
+            app.permanent_session_lifetime = timedelta(minutes=30)
+            flash(u'سُجّل دخولك بنجاح')
             return redirect(url_for('home'))
         else: 
             return redirect(url_for('home'))
@@ -58,7 +73,8 @@ def login():
 # Logout Route 
 @app.route("/logout") 
 def logout(): 
-	session.pop('logged_in', None) 
+	session.pop('logged_in', None)
+    flash(u'سُجّل خروجك بنجاح!')
 	return redirect(url_for('home'))
 
 if __name__ == "__main__":

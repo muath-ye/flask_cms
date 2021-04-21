@@ -7,6 +7,10 @@
 </head>
 <body style="direction: rtl;">
 
+    {% for message in get_flashed_messages() %}
+        <div class="flash"> {{ message }} </div>
+    {% endfor %}
+
     {% if 'logged_in' not in session %}
         <form action="{{ url_for('login') }}" method='POST'>
             <input type="text" placeholder="اسم المُستخدم" name="username">
@@ -14,7 +18,7 @@
             <input type="submit" value="اُدخُل">
         </form>  
     {% else %}
-            <a class="logout" href="{{ url_for('logout') }}">خروج</a>
+        <a class="logout" href="{{ url_for('logout') }}">خروج</a>
     {% endif %}
     <br>
     <img src="{{ url_for('static', filename='img/logo.png')}}" class="logo" />
