@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>الصّفحة الرّئيسيّة</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css')}}">
+</head>
+<body style="direction: rtl;">
+    <img src="{{ url_for('static', filename='img/logo.png')}}" />
+    {# هذا تعليق لن يظهر للزائر #}
+    <h3>{{ page }}</h3>
+    {% set x = 6 %}
+    {% if x == 10 %}
+        x يُساوي 10
+    {% elif x == 5 %}
+        x يُساوي 5
+    {% else %}
+        x يُساوي شيئا آخر
+    {% endif %}
+    <hr>
+    {% for post in posts %}
+        <p> {{ post }} </p>
+    {% endfor %}
+
+    <script src="{{ url_for('static', filename='js/main.js')}}"></script>
+</body> 
+</html>

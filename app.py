@@ -1,19 +1,22 @@
 # -*- coding:utf8 -*-
-from flask import Flask, request
+from flask import Flask, request, render_template
 app = Flask(__name__)
 
+# Home Page
 @app.route("/")
 def home():
-    page = 'Home Page'
-    return page
+    return render_template('index.html', page = u"الصّفحة الرّئيسيّة")
 
+# Hello Page
 @app.route("/hello")
 def hello():
-    return u"""
-    <h1 style="direction:rtl">
-    السّلام عليكم ورحمة الله وبركاته
-    </h1>
-    """
+    return render_template('index.html', page = u"صفحة التّرحيب")
+
+# Posts Page
+@app.route("/posts")
+def posts():
+    posts = [ u"مُحتوى المقال الأول", u"مُحتوى المقال الثاني", u"مُحتوى المقال الثالث", u"مُحتوى المقال الرابع" ]
+    return render_template('index.html', posts = posts, page = u"صفحة المقالات")
 
 @app.route("/say_hello/<name>")
 def say_hello(name):
